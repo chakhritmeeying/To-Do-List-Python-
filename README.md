@@ -18,14 +18,6 @@ functions, lists, loops, and file handling.
 3 → Remove a task
 4 → Exit the program
 
-## Project Structure
-
-todo-list-v2/
--To-Do List_v2.py         # Main program
--tasks.txt                # File for saving tasks
--README.md                # Project documentation
-
-
 ## What I Learned
 
 - Using functions to organize code
