@@ -31,6 +31,14 @@ def remove_task(tasks, task_index):  # Remove a task from the list
     return tasks.pop(task_index - 1)
 
 
+def search_tasks(tasks, search_keyword):
+    matching_tasks = []
+    for idx, task in enumerate(tasks, start=1):
+        if search_keyword.lower() in task.lower():
+            matching_tasks.append((idx, task))
+    return matching_tasks
+
+
 tasks = load_tasks()
 print("Welcome to your To-Do List!")
 while True:  # Main Loop
@@ -38,13 +46,15 @@ while True:  # Main Loop
     print("1. Add a task")
     print("2. View tasks")
     print("3. Remove a task")
-    print("4. Exit")
+    print("4. Search task")
+    print("5. Exit")
 
-    choice = input("Please enter your choice (1-4): ")
+    choice = input("Please enter your choice (1-5): ")
     if choice == "1":  # Add a task
         new_task = input("Enter the task you want to add: ")
         add_task(tasks, new_task)
         print(f"{new_task} has been added to your List.\n")
+        save_tasks(tasks)
 
     elif choice == "2":  # View tasks
         if not tasks:
@@ -67,10 +77,23 @@ while True:  # Main Loop
             if 1 <= remove_index <= len(tasks):
                 task = remove_task(tasks, remove_index)
                 print(f"{task} has been removed from your List.\n")
+                save_tasks(tasks)
             else:
                 print("Invalid task number.\n")
 
-    elif choice == "4":  # Exit and save tasks
+    elif choice == "4":  # Search a task
+        print("Search Tasks.")
+        search_keyword = input("Enter the keyword you want to search : ")
+        matching_tasks = search_tasks(tasks, search_keyword)
+        if not matching_tasks:
+            print("No matching tasks found.")
+        else:
+            print("Matching tasks: ")
+            for idx, task in matching_tasks:
+                print(f"{idx} : {task}")
+            print("\n")
+
+    elif choice == "5":  # Exit and save tasks
         save_tasks(tasks)
         print("Exiting the To-Do List.")
         break
