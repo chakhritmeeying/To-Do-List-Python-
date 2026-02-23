@@ -36,7 +36,8 @@ class ToDoListMainForm:
         button_del_task = tk.Button(
             buttons_frame,
             text="Delete a task",
-            width=20
+            width=20,
+            command=self.delete_task_widgets
         )
         button_search = tk.Button(
             buttons_frame,
@@ -49,41 +50,51 @@ class ToDoListMainForm:
         button_search.pack(pady=10)
 
     def add_task_widgets(self):
-        add_form = tk.Toplevel(self.root)
-        add_form.title("Add Task")
-        add_form.geometry("400x300")
+        if hasattr(self, "add_form") and self.add_form.winfo_exists():
+            self.add_form.focus()
+            return
+        self.add_form = tk.Toplevel(self.root)
+        self.add_form.title("Add Task")
+        self.add_form.geometry("400x300")
 
         tk.Label(
-            add_form,
+            self.add_form,
             text="Add your task"
         ).pack(pady=10)
         entry_add_task = tk.Entry(
-            add_form,
+            self.add_form,
             width=30
         )
         sumit_button = tk.Button(
-            add_form,
+            self.add_form,
             text="Submit",
             command=lambda: self.add_task(
                 entry_add_task.get(),
-                add_form
+                self.add_form
             )
         )
         button_close = tk.Button(
-            add_form,
+            self.add_form,
             text="Close",
-            command=lambda: add_form.destroy()
+            command=lambda: self.add_form.destroy()
         )
         entry_add_task.pack(pady=10)
         sumit_button.pack(pady=10)
         button_close.pack(pady=10)
 
     def add_task(self, task, window):
+        if not task.strip():
+            messagebox.showwarning(
+                "Invalid Task",
+                "Task cannot be empty."
+            )
+            return
         self.tasks.append(task)
         messagebox.showinfo(
             "Task Added",
             f"{task} has been added to your List."
         )
+        self.reset_listbox_tasks()
         self.save_tasks()
         window.destroy()
 
@@ -102,21 +113,48 @@ class ToDoListMainForm:
         except FileNotFoundError:
             return []
 
+    def delete_task_widgets(self):
+        if hasattr(self, "delete_form") and self.delete_form.winfo_exists():
+            self.delete_form.focus()
+            return
+
+        self.delete_form = tk.Toplevel(self.root)
+        self.delete_form.title("Delete task")
+        self.delete_form.geometry("400x300")
+
+        self.create_listbox_tasks(self.delete_form)
+        button_delete = tk.Button(
+            self.delete_form,
+            text="Delete",
+            width=10
+        )
+        button_close = tk.Button(
+            self.delete_form,
+            text="Close",
+            width=10,
+            command=lambda: self.delete_form.destroy()
+        )
+        button_delete.pack(pady=10)
+        button_close.pack(pady=10)
+
     def view_tasks_widgets(self):
-        view_form = tk.Toplevel(self.root)
-        view_form.title("View To-Do List")
-        view_form.geometry("400x300")
+        if hasattr(self, "view_form") and self.view_form.winfo_exists():
+            self.view_form.focus()
+            return
+        self.view_form = tk.Toplevel(self.root)
+        self.view_form.title("View To-Do List")
+        self.view_form.geometry("400x300")
 
         tk.Label(
-            view_form,
+            self.view_form,
             text="Your To-Do List"
         ).pack(pady=10)
 
-        self.create_listbox_tasks(view_form)
+        self.create_listbox_tasks(self.view_form)
         button_close = tk.Button(
-            view_form,
+            self.view_form,
             text="Close",
-            command=lambda: view_form.destroy()
+            command=lambda: self.view_form.destroy()
         )
         button_close.pack(pady=10)
 
@@ -129,9 +167,13 @@ class ToDoListMainForm:
             width=40,
         )
         self.listbox_tasks.delete(0, tk.END)
+        self.reset_listbox_tasks()
+        self.listbox_tasks.pack(pady=10)
+
+    def reset_listbox_tasks(self):
+        self.listbox_tasks.delete(0, tk.END)
         for idx, task in enumerate(self.tasks, start=1):
             self.listbox_tasks.insert(tk.END, f"{idx}. {task}")
-        self.listbox_tasks.pack(pady=10)
 
 
 if __name__ == "__main__":
