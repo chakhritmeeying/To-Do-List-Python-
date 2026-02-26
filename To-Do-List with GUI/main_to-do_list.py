@@ -126,7 +126,10 @@ class ToDoListMainForm:
         button_delete = tk.Button(
             self.delete_form,
             text="Delete",
-            width=10
+            width=10,
+            command=lambda: self.delete_tasks(
+                self.listbox_tasks.curselection()
+            )
         )
         button_close = tk.Button(
             self.delete_form,
@@ -136,6 +139,13 @@ class ToDoListMainForm:
         )
         button_delete.pack(pady=10)
         button_close.pack(pady=10)
+
+    def delete_tasks(self, tasks):
+        selected_tasks = tasks
+        messagebox.showinfo(
+            "Selected_items", f"Your select is {self.listbox_tasks.get(selected_tasks)}"
+        )
+        self.delete_form.focus()
 
     def view_tasks_widgets(self):
         if hasattr(self, "view_form") and self.view_form.winfo_exists():
