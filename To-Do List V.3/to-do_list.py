@@ -103,7 +103,11 @@ class TodoList:
     def onclick_list_to_entry(self, event):
         self.input_entry.delete(0, tk.END)
         # Add clicked list item to entry box
-        self.input_entry.insert(0, self.listbox_tasks.get(tk.ACTIVE))
+        selected_index = self.listbox_tasks.curselection()
+        if selected_index:
+            self.input_entry.insert(0, self.listbox_tasks.get(selected_index))
+
+        # self.input_entry.insert(0, self.listbox_tasks.get(tk.ACTIVE))
 
     def check_match_entry_listbox(self, event):
         # grab what was typed
