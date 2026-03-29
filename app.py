@@ -1,0 +1,87 @@
+class TodoList:
+    def __init__(self):
+        self.tasks = []
+
+    def load_tasks(self):
+        try:
+            with open("tasks.txt", "r") as file:
+                for line in file:
+                    self.tasks.append(line.strip())
+            return self.tasks
+        except FileNotFoundError:
+            return []
+
+    def add_task(self, new_task):
+        self.tasks.append(new_task)
+
+    def view_tasks(self):
+        for idx, task in enumerate(self.tasks, start=1):
+            print(f"{idx} : {task} ")
+
+    def delete_task(self, index_task):
+        return self.tasks.pop(index_task - 1)
+
+    def save_tasks(self):
+        with open("tasks.txt", "w") as file:
+            for line in self.tasks:
+                file.write(line + "\n")
+
+
+def main():
+    todo_list = TodoList()
+    todo_list.load_tasks()
+    while True:
+        print("\n1. Add Task")
+        print("2. View Tasks")
+        print("3. Delete Task")
+        print("4. Exit")
+
+        choice = input("Choice you command (1 - 4): ")
+
+        if choice == '1':
+            new_task = input("Enter task : ")
+            todo_list.add_task(new_task)
+            print(f"{new_task} has been add to list.")
+            todo_list.save_tasks()
+
+        elif choice == '2':
+            if not todo_list.tasks:
+                print("List is empty.")
+            else:
+                total_list = len(todo_list.tasks)
+                print("\nYour To-Do List")
+                todo_list.view_tasks()
+                print(f"Total list : {total_list} list.")
+
+        elif choice == '3':
+            cancel = len(todo_list.tasks)+1
+            print("\nYour To-Do List")
+            todo_list.view_tasks()
+            print(f"{cancel} : back to main mane")
+
+            try:
+                index = int(input("\nEnter index to delete : "))
+            except ValueError:
+                print("Please enter a number.")
+                continue
+
+            if 1 <= index <= len(todo_list.tasks):
+                delete_task = todo_list.delete_task(index)
+                print(f"{delete_task} has been removed from your List.\n")
+                todo_list.save_tasks()
+            elif index == cancel:
+                print("back to main mane")
+                continue
+
+        elif choice == '4':
+            todo_list.save_tasks()
+            print("\nYour all To-Do List.")
+            todo_list.view_tasks()
+            break
+        else:
+            print("Please choice 1 - 4 !")
+            continue
+
+
+if __name__ == "__main__":
+    main()
